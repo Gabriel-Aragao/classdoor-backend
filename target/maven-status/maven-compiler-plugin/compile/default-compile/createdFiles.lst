@@ -2,7 +2,11 @@ com/classdoor/backend/controller/ReviewController.class
 com/classdoor/backend/repository/ClassRoomRepository.class
 com/classdoor/backend/model/Role.class
 com/classdoor/backend/dto/ReviewRequest.class
+com/classdoor/backend/dto/ClassRoomRequest.class
+com/classdoor/backend/repository/ClassEnrollmentRepository.class
 com/classdoor/backend/repository/CourseRepository.class
+com/classdoor/backend/model/ClassEnrollment.class
+com/classdoor/backend/service/ClassService.class
 com/classdoor/backend/repository/UserRepository.class
 com/classdoor/backend/security/JwtService.class
 com/classdoor/backend/dto/AuthResponse.class
@@ -23,5 +27,7 @@ com/classdoor/backend/service/ReviewService.class
 com/classdoor/backend/dto/LoginRequest.class
 com/classdoor/backend/security/JwtAuthenticationFilter.class
 com/classdoor/backend/dto/RegisterRequest.class
+com/classdoor/backend/dto/BulkStudentsRequest.class
+com/classdoor/backend/controller/ClassController.class
 com/classdoor/backend/model/User.class
 com/classdoor/backend/repository/ReviewRepository.class
