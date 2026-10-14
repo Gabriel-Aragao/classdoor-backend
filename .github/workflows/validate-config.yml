@@ -1,0 +1,46 @@
+name: Validate Config Guard
+
+on:
+  push:
+    branches: [ "main", "dev" ]
+  pull_request:
+    branches: [ "main", "dev" ]
+
+jobs:
+  check-forbidden-files:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Check for forbidden local configuration files
+        run: |
+          echo "Verificando se arquivos de configuração local foram inadvertidamente incluídos..."
+          
+          # Lista de arquivos proibidos no repositório remoto
+          FORBIDDEN_FILES=("src/main/resources/application-local.yml" ".env" ".env.local" "local.properties")
+          
+          for file in "${FORBIDDEN_FILES[@]}"; do
+            if git ls-files --error-match "$file" > /dev/null 2>&1; then
+              echo "❌ ERRO: O arquivo proibido '$file' foi detectado no controle de versão!"
+              echo "Arquivos de configuração local/credenciais não devem ser commitados."
+              exit 1
+            fi
+          done
+          
+          echo "✅ Nenhum arquivo de configuração local proibido foi encontrado."
+
+      - name: Check for localhost/127.0.0.1 hardcoded in production configs
+        run: |
+          echo "Verificando se há URLs de localhost em arquivos de produção..."
+          
+          # Procura por localhost ou 127.0.0.1 em application.yml (exceto se comentado)
+          if git grep -E "localhost|127\.0\.0\.1" -- "src/main/resources/application.yml" 2>/dev/null; then
+            echo "❌ ERRO: Detectadas referências a 'localhost' ou '127.0.0.1' no arquivo de produção 'application.yml'!"
+            echo "Utilize variáveis de ambiente ou perfis adequados para o ambiente produtivo."
+            exit 1
+          fi
+          
+          echo "✅ Nenhuma URL de localhost hardcoded em arquivos de produção."
