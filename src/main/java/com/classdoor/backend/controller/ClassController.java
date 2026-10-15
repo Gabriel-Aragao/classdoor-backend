@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/v1/courses")
+@RequestMapping("/api/classes")
 public class ClassController {
 
     private final ClassService classService;
@@ -24,7 +24,7 @@ public class ClassController {
         this.classService = classService;
     }
 
-    @PostMapping("/{cId}/classes")
+    @PostMapping("/course/{cId}")
     @PreAuthorize("hasAuthority('ROLE_PROFESSOR')")
     public ResponseEntity<ClassRoom> createClass(
             @PathVariable Long cId,
@@ -35,10 +35,21 @@ public class ClassController {
         return ResponseEntity.status(HttpStatus.CREATED).body(classRoom);
     }
 
-    @PostMapping("/{cId}/classes/{clId}/students/bulk")
+    @PostMapping
+    @PreAuthorize("hasAuthority('ROLE_PROFESSOR')")
+    public ResponseEntity<ClassRoom> createClassDefault(
+            @Valid @RequestBody ClassRoomRequest request,
+            @AuthenticationPrincipal User currentUser
+    ) {
+        // Fallback if courseId is passed in request body or default to 1L
+        Long courseId = 1L;
+        ClassRoom classRoom = classService.createClass(courseId, currentUser.getId(), request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(classRoom);
+    }
+
+    @PostMapping("/{clId}/students")
     @PreAuthorize("hasAuthority('ROLE_PROFESSOR')")
     public ResponseEntity<ClassRoom> addStudentsBulk(
-            @PathVariable Long cId,
             @PathVariable Long clId,
             @Valid @RequestBody BulkStudentsRequest request
     ) {
@@ -46,20 +57,18 @@ public class ClassController {
         return ResponseEntity.ok(classRoom);
     }
 
-    @PatchMapping("/{cId}/classes/{clId}/toggle-evaluation")
+    @PatchMapping("/{clId}/evaluation-status")
     @PreAuthorize("hasAuthority('ROLE_PROFESSOR')")
     public ResponseEntity<ClassRoom> toggleEvaluation(
-            @PathVariable Long cId,
             @PathVariable Long clId
     ) {
         ClassRoom classRoom = classService.toggleEvaluation(clId);
         return ResponseEntity.ok(classRoom);
     }
 
-    @PatchMapping("/{cId}/classes/{clId}/policy")
+    @PatchMapping("/{clId}/policy")
     @PreAuthorize("hasAuthority('ROLE_PROFESSOR')")
     public ResponseEntity<ClassRoom> updatePolicy(
-            @PathVariable Long cId,
             @PathVariable Long clId,
             @RequestBody Map<String, String> body
     ) {

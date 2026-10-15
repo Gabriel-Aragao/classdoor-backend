@@ -14,7 +14,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/reviews")
+@RequestMapping("/api/reviews")
 public class ReviewController {
 
     private final ReviewService reviewService;
@@ -33,7 +33,7 @@ public class ReviewController {
         return ResponseEntity.status(HttpStatus.CREATED).body(review);
     }
 
-    @PostMapping("/{id}/useful")
+    @PostMapping({"/{id}/useful", "/{id}/upvote"})
     public ResponseEntity<Review> upvoteReview(@PathVariable Long id) {
         Review review = reviewService.upvoteReview(id);
         return ResponseEntity.ok(review);
@@ -51,9 +51,26 @@ public class ReviewController {
         } else if (courseId != null) {
             reviews = reviewService.getReviewsByCourse(courseId, pageable);
         } else {
-            // Default empty or handle general
             reviews = Page.empty(pageable);
         }
+        return ResponseEntity.ok(reviews);
+    }
+
+    @GetMapping("/professors/{professorId}/reviews")
+    public ResponseEntity<Page<Review>> getReviewsByProfessorPath(
+            @PathVariable Long professorId,
+            Pageable pageable
+    ) {
+        Page<Review> reviews = reviewService.getReviewsByProfessor(professorId, pageable);
+        return ResponseEntity.ok(reviews);
+    }
+
+    @GetMapping("/courses/{courseId}/reviews")
+    public ResponseEntity<Page<Review>> getReviewsByCoursePath(
+            @PathVariable Long courseId,
+            Pageable pageable
+    ) {
+        Page<Review> reviews = reviewService.getReviewsByCourse(courseId, pageable);
         return ResponseEntity.ok(reviews);
     }
 }
