@@ -34,13 +34,14 @@ Em vez de rodar um PostgreSQL localmente, o time de desenvolvimento se conecta d
 Como o Spring Boot suporta nativamente arquivos `.env` na raiz do projeto, você não precisa criar arquivos de propriedades locais.
 
 1. Clone o repositório e navegue até a pasta do projeto.
-2. Crie um arquivo `.env` na **raiz** do repositório `classdoor-backend` com as seguintes variáveis de ambiente locais:
+2. Crie um arquivo `.env` na **raiz** do repositório `classdoor-backend` com as variáveis de ambiente locais:
    ```env
    SPRING_DATASOURCE_URL=jdbc:postgresql://127.0.0.1:5432/classdoor_dev_db
-   SPRING_DATASOURCE_USERNAME=classdoor_dev_user
-   SPRING_DATASOURCE_PASSWORD=pass
+   SPRING_DATASOURCE_USERNAME=<<SOLICITAR_AO_CTO_GABRIEL>>
+   SPRING_DATASOURCE_PASSWORD=<<SOLICITAR_AO_CTO_GABRIEL>>
    SERVER_PORT=8080
    ```
+   > 🔑 **Importante:** Para obter o seu usuário e senha exclusivos do banco de dados de desenvolvimento, bem como quaisquer segredos de API necessários, **solicite diretamente ao CTO Gabriel-Aragao (`@domaragao`)**. 
    > 💡 **Nota:** O arquivo `.env` é ignorado pelo Git e **NUNCA** deve ser commitado ou enviado para o repositório remoto.
 
 3. Para rodar o backend localmente via Maven:
@@ -56,8 +57,9 @@ Como o Spring Boot suporta nativamente arquivos `.env` na raiz do projeto, você
 Para visualizar os logs dos serviços rodando em produção ou desenvolvimento na VPS (ideal para QA e desenvolvedores sem acesso SSH), disponibilizamos um painel centralizado em Grafana:
 
 - **URL de Acesso:** [https://logs.odominoapp.win](https://logs.odominoapp.win)
-- **Usuário:** `admin`
-- **Senha:** `classdoor_secure_2026`
+- **Usuário:** `<<SOLICITAR_AO_CTO_GABRIEL>>`
+- **Senha:** `<<SOLICITAR_AO_CTO_GABRIEL>>`
+  *(Solicite as credenciais de acesso ao painel de logs diretamente ao CTO Gabriel-Aragao).*
 
 No painel do Grafana (Explore -> Loki), você pode filtrar os logs por container, unit do systemd (`classdoor-prod`, `classdoor-dev`) ou por nível de erro em tempo real.
 
