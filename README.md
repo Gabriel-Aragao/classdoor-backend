@@ -31,23 +31,17 @@ Em vez de rodar um PostgreSQL localmente, o time de desenvolvimento se conecta d
 
 ### 3. Configuração do Backend Local (`classdoor-backend`)
 
-1. Clone o repositório e navegue até a pasta do projeto.
-2. Crie ou edite o arquivo de configuração local em `src/main/resources/application-local.yml` (ou configure as variáveis de ambiente equivalentes):
-   ```yaml
-   spring:
-     datasource:
-       url: jdbc:postgresql://127.0.0.1:5432/classdoor_dev_db
-       username: classdoor_dev_user
-       password: pass
-     jpa:
-       hibernate:
-         ddl-auto: update
-       show-sql: true
+Como o Spring Boot suporta nativamente arquivos `.env` na raiz do projeto, você não precisa criar arquivos de propriedades locais.
 
-   server:
-     port: 8080
+1. Clone o repositório e navegue até a pasta do projeto.
+2. Crie um arquivo `.env` na **raiz** do repositório `classdoor-backend` com as seguintes variáveis de ambiente locais:
+   ```env
+   SPRING_DATASOURCE_URL=jdbc:postgresql://127.0.0.1:5432/classdoor_dev_db
+   SPRING_DATASOURCE_USERNAME=classdoor_dev_user
+   SPRING_DATASOURCE_PASSWORD=pass
+   SERVER_PORT=8080
    ```
-   > 💡 **Nota:** O arquivo `application-local.yml` **NUNCA** deve ser commitado ou enviado para o repositório remoto, pois ele contém credenciais específicas da sua máquina.
+   > 💡 **Nota:** O arquivo `.env` é ignorado pelo Git e **NUNCA** deve ser commitado ou enviado para o repositório remoto.
 
 3. Para rodar o backend localmente via Maven:
    ```bash
@@ -72,6 +66,6 @@ No painel do Grafana (Explore -> Loki), você pode filtrar os logs por container
 ## ⚠️ AVISOS DE SEGURANÇA E BOAS PRÁTICAS
 
 1. **Configurações Locais Proibidas no Git:** 
-   Arquivos como `application-local.yml`, `.env.local`, logs locais ou credenciais de banco de dados locais **jamais** devem ser enviados para o GitHub. 
+   Arquivos como `.env`, `.env.local`, logs locais ou credenciais de banco de dados locais **jamais** devem ser enviados para o GitHub. 
 2. **Uso do `.gitignore`:** 
-   O projeto já possui um `.gitignore` configurado para ignorar arquivos de configuração sensíveis e de ambiente. Sempre verifique o comando `git status` antes de realizar um `git add` ou `git commit` para garantir que apenas código-fonte e arquivos de template (`application.yml.example`) sejam enviados.
+   O projeto já possui um `.gitignore` configurado para ignorar arquivos de configuração sensíveis e de ambiente. Sempre verifique o comando `git status` antes de realizar um `git add` ou `git commit`.
