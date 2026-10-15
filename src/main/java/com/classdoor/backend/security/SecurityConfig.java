@@ -2,6 +2,7 @@ package com.classdoor.backend.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -42,6 +43,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/home/featured", "/api/v1/home/featured", "/api/professors/**", "/api/v1/professors/**", "/api/courses/**", "/api/v1/courses/**", "/api/search/**", "/api/v1/search/**", "/api/departments", "/api/v1/departments", "/api/reviews/**", "/api/v1/reviews/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/reviews/*/upvote", "/api/reviews/*/useful", "/api/v1/reviews/*/upvote", "/api/v1/reviews/*/useful").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
