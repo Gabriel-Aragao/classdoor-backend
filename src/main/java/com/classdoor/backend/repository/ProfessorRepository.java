@@ -14,7 +14,7 @@ import java.util.List;
 public interface ProfessorRepository extends JpaRepository<Professor, Long> {
 
     @Query("SELECT p FROM Professor p WHERE " +
-           "(:search IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%')) OR LOWER(p.email) LIKE LOWER(CONCAT('%', :search, '%'))) AND " +
+           "(:search IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', CAST(:search AS text), '%')) OR LOWER(p.email) LIKE LOWER(CONCAT('%', CAST(:search AS text), '%'))) AND " +
            "(:department IS NULL OR p.department = :department) AND " +
            "(:minRating IS NULL OR p.averageRating >= :minRating)")
     Page<Professor> findWithFilters(
