@@ -1,6 +1,7 @@
 /home/ubuntu/classdoor-backend/src/main/java/com/classdoor/backend/BackendApplication.java
 /home/ubuntu/classdoor-backend/src/main/java/com/classdoor/backend/HelloController.java
 /home/ubuntu/classdoor-backend/src/main/java/com/classdoor/backend/config/DataInitializer.java
+/home/ubuntu/classdoor-backend/src/main/java/com/classdoor/backend/config/OpenApiConfig.java
 /home/ubuntu/classdoor-backend/src/main/java/com/classdoor/backend/controller/AuthController.java
 /home/ubuntu/classdoor-backend/src/main/java/com/classdoor/backend/controller/CatalogController.java
 /home/ubuntu/classdoor-backend/src/main/java/com/classdoor/backend/controller/ClassController.java
