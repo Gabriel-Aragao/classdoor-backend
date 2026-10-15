@@ -21,6 +21,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
+
 import java.util.Arrays;
 
 @Configuration
@@ -42,9 +44,9 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/home/featured", "/api/v1/home/featured", "/api/professors/**", "/api/v1/professors/**", "/api/courses/**", "/api/v1/courses/**", "/api/search/**", "/api/v1/search/**", "/api/departments", "/api/v1/departments", "/api/reviews/**", "/api/v1/reviews/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/reviews/*/upvote", "/api/reviews/*/useful", "/api/v1/reviews/*/upvote", "/api/v1/reviews/*/useful").permitAll()
+                        .requestMatchers(antMatcher("/api/auth/**"), antMatcher("/api/v1/auth/**"), antMatcher("/v3/api-docs/**"), antMatcher("/swagger-ui/**"), antMatcher("/swagger-ui.html"), antMatcher("/error"), antMatcher("/hello")).permitAll()
+                        .requestMatchers(antMatcher(HttpMethod.GET, "/api/v1/**"), antMatcher(HttpMethod.GET, "/api/reviews/**"), antMatcher(HttpMethod.GET, "/api/professors/**"), antMatcher(HttpMethod.GET, "/api/courses/**"), antMatcher(HttpMethod.GET, "/api/search/**"), antMatcher(HttpMethod.GET, "/api/departments"), antMatcher(HttpMethod.GET, "/api/home/featured")).permitAll()
+                        .requestMatchers(antMatcher(HttpMethod.POST, "/api/reviews/*/upvote"), antMatcher(HttpMethod.POST, "/api/reviews/*/useful"), antMatcher(HttpMethod.POST, "/api/v1/reviews/*/upvote"), antMatcher(HttpMethod.POST, "/api/v1/reviews/*/useful")).permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
