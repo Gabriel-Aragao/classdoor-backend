@@ -6,23 +6,26 @@ Bem-vindo ao repositório do backend do projeto **Classdoor**, construído com *
 
 ## 🚀 Guia de Execução Local (Para Desenvolvedores e Membros da Equipe)
 
-Este tutorial passo a passo orienta como configurar e rodar o backend e o frontend simultaneamente no seu computador de desenvolvimento local.
+Este tutorial passo a passo orienta como configurar e rodar o backend conectando-se ao banco de dados de desenvolvimento centralizado na VPS.
 
 ### 1. Pré-requisitos
 Certifique-se de ter instalado em sua máquina:
 - **Java Development Kit (JDK) 21**
 - **Maven** (versão 3.8+)
-- **PostgreSQL** (versão 16+)
 - **Node.js** (versão 18+) e npm/yarn (para rodar o frontend)
+- **Cloudflared** (necessário para o túnel do banco de dados)
 
 ---
 
-### 2. Configuração do Banco de Dados Local
-1. Abra o seu cliente PostgreSQL (DBeaver, psql, pgAdmin) e crie um banco de dados local para desenvolvimento:
-   ```sql
-   CREATE DATABASE classdoor_dev;
+### 2. Conexão com o Banco de Dados de Desenvolvimento (VPS)
+Em vez de rodar um PostgreSQL localmente, o time de desenvolvimento se conecta diretamente ao banco de dados `classdoor_dev_db` hospedado na VPS através do Cloudflare Tunnel.
+
+1. **Ative o túnel TCP na sua máquina local:**
+   Abra o seu terminal local e execute o comando do Cloudflare para abrir a porta `5432` localmente:
+   ```bash
+   cloudflared access tcp --hostname db.odominoapp.win --url 127.0.0.1:5432
    ```
-2. Opcionalmente, crie um usuário local ou utilize o seu superusuário do Postgres.
+2. Mantenha esse terminal aberto enquanto estiver desenvolvendo.
 
 ---
 
@@ -33,9 +36,9 @@ Certifique-se de ter instalado em sua máquina:
    ```yaml
    spring:
      datasource:
-       url: jdbc:postgresql://localhost:5432/classdoor_dev
-       username: seu_usuario_postgres
-       password: sua_senha_postgres
+       url: jdbc:postgresql://127.0.0.1:5432/classdoor_dev_db
+       username: classdoor_dev_user
+       password: pass
      jpa:
        hibernate:
          ddl-auto: update
@@ -55,22 +58,14 @@ Certifique-se de ter instalado em sua máquina:
 
 ---
 
-### 4. Configuração do Frontend Local (`classdoor-frontend`)
+### 4. Acesso aos Logs do Sistema (Grafana Loki)
+Para visualizar os logs dos serviços rodando em produção ou desenvolvimento na VPS (ideal para QA e desenvolvedores sem acesso SSH), disponibilizamos um painel centralizado em Grafana:
 
-1. Navegue até o repositório do frontend.
-2. Instale as dependências:
-   ```bash
-   npm install
-   ```
-3. Crie um arquivo `.env.local` na raiz do frontend apontando para o seu backend local:
-   ```env
-   NEXT_PUBLIC_API_URL=http://localhost:8080
-   ```
-4. Inicie o servidor de desenvolvimento do frontend:
-   ```bash
-   npm run dev
-   ```
-5. Acesse a aplicação no navegador em `http://localhost:3000`.
+- **URL de Acesso:** [https://logs.odominoapp.win](https://logs.odominoapp.win)
+- **Usuário:** `admin`
+- **Senha:** `classdoor_secure_2026`
+
+No painel do Grafana (Explore -> Loki), você pode filtrar os logs por container, unit do systemd (`classdoor-prod`, `classdoor-dev`) ou por nível de erro em tempo real.
 
 ---
 
