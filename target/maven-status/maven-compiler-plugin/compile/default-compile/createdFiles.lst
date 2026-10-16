@@ -15,6 +15,7 @@ com/classdoor/backend/model/ClassRoom.class
 com/classdoor/backend/service/AuthService.class
 com/classdoor/backend/model/Professor.class
 com/classdoor/backend/security/SecurityConfig.class
+com/classdoor/backend/config/OpenApiConfig.class
 com/classdoor/backend/security/CustomUserDetailsService.class
 com/classdoor/backend/controller/AuthController.class
 com/classdoor/backend/BackendApplication.class
