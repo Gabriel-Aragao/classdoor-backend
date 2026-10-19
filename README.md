@@ -33,7 +33,12 @@ Em vez de rodar um PostgreSQL localmente, o time de desenvolvimento se conecta d
 
 Como o Spring Boot suporta nativamente arquivos `.env` na raiz do projeto, você não precisa criar arquivos de propriedades locais.
 
-1. Clone o repositório e navegue até a pasta do projeto.
+1. Clone o repositório, mude para a branch de desenvolvimento (`dev`) e navegue até a pasta do projeto:
+   ```bash
+   git clone https://github.com/Gabriel-Aragao/classdoor-backend.git
+   cd classdoor-backend
+   git checkout dev
+   ```
 2. Crie um arquivo `.env` na **raiz** do repositório `classdoor-backend` com as variáveis de ambiente locais:
    ```env
    SPRING_DATASOURCE_URL=jdbc:postgresql://127.0.0.1:5432/classdoor_dev_db
