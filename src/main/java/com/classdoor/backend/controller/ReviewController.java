@@ -12,12 +12,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestController
 @RequestMapping("/api/reviews")
 public class ReviewController {
 
     private final ReviewService reviewService;
+    private static final Logger logger = LoggerFactory.getLogger(ReviewController.class);
 
     public ReviewController(ReviewService reviewService) {
         this.reviewService = reviewService;
@@ -29,13 +32,17 @@ public class ReviewController {
             @Valid @RequestBody ReviewRequest request,
             @AuthenticationPrincipal User currentUser
     ) {
+        logger.info("Attempting submission of review {} received by {} ", request, currentUser.getEmail());
         Review review = reviewService.submitReview(request, currentUser);
+        logger.info("Successfully submitted review {} with id: {}", review, review.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(review);
     }
 
     @PostMapping({"/{id}/useful", "/{id}/upvote"})
     public ResponseEntity<Review> upvoteReview(@PathVariable Long id) {
+        logger.info("Attempting upvote for review {}", id);
         Review review = reviewService.upvoteReview(id);
+        logger.info("Successfully upvoted review {}", id);
         return ResponseEntity.ok(review);
     }
 
@@ -45,6 +52,7 @@ public class ReviewController {
             @RequestParam(required = false) Long courseId,
             Pageable pageable
     ) {
+        logger.info("attempting to retreive reviews with professorId: {} and courseId: {}", professorId, courseId);
         Page<Review> reviews;
         if (professorId != null) {
             reviews = reviewService.getReviewsByProfessor(professorId, pageable);
@@ -52,7 +60,9 @@ public class ReviewController {
             reviews = reviewService.getReviewsByCourse(courseId, pageable);
         } else {
             reviews = Page.empty(pageable);
+
         }
+        logger.info("Successfully retreived reviews: {}", reviews);
         return ResponseEntity.ok(reviews);
     }
 
@@ -61,7 +71,9 @@ public class ReviewController {
             @PathVariable Long professorId,
             Pageable pageable
     ) {
+        logger.info("attempting to retreive reviews for professor {}", professorId);
         Page<Review> reviews = reviewService.getReviewsByProfessor(professorId, pageable);
+        logger.info("Successfully retreived reviews: {}", reviews);
         return ResponseEntity.ok(reviews);
     }
 
@@ -70,7 +82,9 @@ public class ReviewController {
             @PathVariable Long courseId,
             Pageable pageable
     ) {
+        logger.info("attempting to retreive reviews for course {}", courseId);
         Page<Review> reviews = reviewService.getReviewsByCourse(courseId, pageable);
+        logger.info("Successfully retreived reviews: {}", reviews);
         return ResponseEntity.ok(reviews);
     }
 }
