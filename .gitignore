@@ -25,9 +25,3 @@ nb-configuration.xml
 
 ### Mac OS ###
 .DS_Store
-
-### agents ###
-.agents/
-
-### env ###
-.env

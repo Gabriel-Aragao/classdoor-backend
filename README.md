@@ -6,48 +6,63 @@ Bem-vindo ao repositório do backend do projeto **Classdoor**, construído com *
 
 ## 🚀 Guia de Execução Local (Para Desenvolvedores e Membros da Equipe)
 
-Este tutorial passo a passo orienta como configurar e rodar o backend conectando-se ao banco de dados de desenvolvimento centralizado na VPS.
+Este tutorial orienta como configurar e rodar o backend localmente utilizando o banco de dados PostgreSQL via **Docker Compose**.
 
 ### 1. Pré-requisitos
 Certifique-se de ter instalado em sua máquina:
 - **Java Development Kit (JDK) 21**
 - **Maven** (versão 3.8+)
-- **Node.js** (versão 18+) e npm/yarn (para rodar o frontend)
-- **Cloudflared** (necessário para o túnel do banco de dados)
+- **Docker** e **Docker Compose**
+- *(Opcional)* **Cloudflared** (apenas se for utilizar a conexão com a VPS)
 
 ---
 
-### 2. Conexão com o Banco de Dados de Desenvolvimento (VPS)
-Em vez de rodar um PostgreSQL localmente, o time de desenvolvimento se conecta diretamente ao banco de dados `classdoor_dev_db` hospedado na VPS através do Cloudflare Tunnel.
+### 2. Inicialização do Banco de Dados Local (Docker Compose)
 
-1. **Ative o túnel TCP na sua máquina local:**
-   Abra o seu terminal local e execute o comando do Cloudflare para abrir a porta `5432` localmente:
+O projeto inclui um arquivo `docker-compose.yml` pré-configurado na raiz para subir uma instância local do **PostgreSQL 16**.
+
+1. **Subir o container do PostgreSQL em segundo plano:**
    ```bash
-   cloudflared access tcp --hostname db.odominoapp.win --url 127.0.0.1:5432
+   docker compose up -d
    ```
-2. Mantenha esse terminal aberto enquanto estiver desenvolvendo.
+2. **Verificar se o container está ativo e saudável:**
+   ```bash
+   docker compose ps
+   ```
+3. **Comandos úteis para o Docker Compose:**
+   - Visualizar os logs do banco em tempo real:
+     ```bash
+     docker compose logs -f postgres
+     ```
+   - Parar o banco de dados mantendo os dados persistidos:
+     ```bash
+     docker compose down
+     ```
+   - Reiniciar o container:
+     ```bash
+     docker compose restart
+     ```
+
+> 💾 **Persistência de Dados:** Os dados do banco são armazenados em um volume gerenciado pelo Docker (`classdoor_postgres_data`), persistindo mesmo após parar o container.
 
 ---
 
-### 3. Configuração do Backend Local (`classdoor-backend`)
+### 3. Configuração do `.env` para o Banco Local
 
-Como o Spring Boot suporta nativamente arquivos `.env` na raiz do projeto, você não precisa criar arquivos de propriedades locais.
+O Spring Boot lê automaticamente as variáveis de ambiente a partir do arquivo `.env` na raiz do projeto.
 
-1. Clone o repositório, mude para a branch de desenvolvimento (`dev`) e navegue até a pasta do projeto:
+1. Crie o arquivo `.env` na raiz do repositório copiando o modelo de exemplo:
    ```bash
-   git clone https://github.com/Gabriel-Aragao/classdoor-backend.git
-   cd classdoor-backend
-   git checkout dev
+   cp .env.example .env
    ```
-2. Crie um arquivo `.env` na **raiz** do repositório `classdoor-backend` com as variáveis de ambiente locais:
+2. Certifique-se de que o `.env` contenha as credenciais do banco local configuradas no Docker Compose:
    ```env
-   SPRING_DATASOURCE_URL=jdbc:postgresql://127.0.0.1:5432/classdoor_dev_db
-   SPRING_DATASOURCE_USERNAME=<<SOLICITAR_AO_CTO_GABRIEL>>
-   SPRING_DATASOURCE_PASSWORD=<<SOLICITAR_AO_CTO_GABRIEL>>
+   SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/classdoor_db
+   SPRING_DATASOURCE_USERNAME=postgres
+   SPRING_DATASOURCE_PASSWORD=postgres123
    SERVER_PORT=8080
    ```
-   > 🔑 **Importante:** Para obter o seu usuário e senha exclusivos do banco de dados de desenvolvimento, bem como quaisquer segredos de API necessários, **solicite diretamente ao CTO Gabriel-Aragao (`@domaragao`)**. 
-   > 💡 **Nota:** O arquivo `.env` é ignorado pelo Git e **NUNCA** deve ser commitado ou enviado para o repositório remoto.
+   > 💡 **Nota:** O Flyway aplicará automaticamente as migrações na inicialização da aplicação e o `DataInitializer` criará os dados iniciais de teste (professores, cursos e turmas).
 
 3. Para rodar o backend localmente via Maven:
    ```bash
@@ -58,7 +73,25 @@ Como o Spring Boot suporta nativamente arquivos `.env` na raiz do projeto, você
 
 ---
 
-### 4. Acesso aos Logs do Sistema (Grafana Loki)
+### 4. (Opcional) Conexão com o Banco Remoto de Desenvolvimento (VPS)
+
+Caso precise se conectar ao banco centralizado hospedado na VPS via Cloudflare Tunnel em vez do banco local:
+
+1. Execute o túnel TCP:
+   ```bash
+   cloudflared access tcp --hostname db.odominoapp.win --url 127.0.0.1:5432
+   ```
+2. No seu arquivo `.env`, altere o nome do banco e credenciais:
+   ```env
+   SPRING_DATASOURCE_URL=jdbc:postgresql://127.0.0.1:5432/classdoor_dev_db
+   SPRING_DATASOURCE_USERNAME=<<SOLICITAR_AO_CTO_GABRIEL>>
+   SPRING_DATASOURCE_PASSWORD=<<SOLICITAR_AO_CTO_GABRIEL>>
+   SERVER_PORT=8080
+   ```
+
+---
+
+### 5. Acesso aos Logs do Sistema (Grafana Loki)
 Para visualizar os logs dos serviços rodando em produção ou desenvolvimento na VPS (ideal para QA e desenvolvedores sem acesso SSH), disponibilizamos um painel centralizado em Grafana:
 
 - **URL de Acesso:** [https://logs.odominoapp.win](https://logs.odominoapp.win)
